@@ -5,8 +5,7 @@
  */
 package Model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,13 +13,13 @@ import java.util.Set;
  */
 public class Personne extends Contact{
     
-    private Set<Telephone> phones = new HashSet<>();
+    private ArrayList<Telephone> phones = new ArrayList<>();
     private String adresse;
     private String cpt;
     private String ville;
-    private Set<Email> emails = new HashSet<>();
+    private ArrayList<Email> emails = new ArrayList();
     
-    public Personne(String nom, String prenom, String adresse, String cpt, String ville) {
+    public Personne(String nom, String prenom,String adresse, String cpt, String ville) {
         this.setNom(nom);
         this.setPrenom(prenom);
         this.adresse = adresse;
@@ -68,19 +67,19 @@ public class Personne extends Contact{
         this.emails.remove(mail);
     }
 
-    public Set<Telephone> getPhones() {
+    public ArrayList getPhones() {
         return phones;
     }
 
-    public void setPhones(Set<Telephone> phones) {
+    public void setPhones(ArrayList phones) {
         this.phones = phones;
     }
 
-    public Set<Email> getEmails() {
+    public ArrayList getEmails() {
         return emails;
     }
 
-    public void setEmails(Set<Email> emails) {
+    public void setEmails(ArrayList emails) {
         this.emails = emails;
     }
     

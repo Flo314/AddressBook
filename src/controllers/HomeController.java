@@ -5,26 +5,37 @@
  */
 package controllers;
 
+
+
 import Model.Personne;
+
+
 
 import Utils.SingletonCnx;
 import javafx.event.ActionEvent;
 import java.net.URL;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import java.sql.SQLException;
+
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 
 /**
@@ -36,6 +47,7 @@ public class HomeController implements Initializable {
 
     SingletonCnx cnx;
     Personne personne;
+    
 
     @FXML
     private TextField nom;
@@ -67,11 +79,32 @@ public class HomeController implements Initializable {
     @FXML
     private TableView<Personne> tblData;
 
+    @FXML
+    private TableColumn<Personne, String> col_nom;
+
+    @FXML
+    private TableColumn<Personne, String> col_prenom;
+
+    @FXML
+    private TableColumn<Personne, String> col_tel;
+
+    @FXML
+    private TableColumn<Personne, String> col_adress;
+
+    @FXML
+    private TableColumn<Personne, String> col_code;
+
+    @FXML
+    private TableColumn<Personne, String> col_vil;
+
+    @FXML
+    private TableColumn<Personne, String> col_mail;
 
     @FXML
     private Button printButton;
     
-    
+    ObservableList<Personne> oblist = FXCollections.observableArrayList();
+
     /**
      * Initializes the controller class.
      *
@@ -80,21 +113,41 @@ public class HomeController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         try {
-            cnx.getConnection();
+            Connection con = SingletonCnx.getConnection();
+            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM contact");
+            
+                        
+            while(rs.next()){
+                oblist.add(new Personne(rs.getString("nom"),
+                rs.getString("prenom"),
+                rs.getString("adresse"),
+                rs.getString("cpt"),
+                rs.getString("ville")));
+
+ 
+            }
         } catch (SQLException ex) {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        col_nom.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        col_prenom.setCellValueFactory(new PropertyValueFactory<>("prenom"));
+        col_tel.setCellValueFactory(new PropertyValueFactory<>("phones")); 
+        col_adress.setCellValueFactory(new PropertyValueFactory<>("adresse"));
+        col_code.setCellValueFactory(new PropertyValueFactory<>("cpt")); 
+        col_vil.setCellValueFactory(new PropertyValueFactory<>("ville"));
+        col_mail.setCellValueFactory(new PropertyValueFactory<>("emails"));
 
+        tblData.setItems(oblist);
     }
-
 
     @FXML
     void deleteContact(ActionEvent event) {
 
     }
-    
+
     @FXML
     void editContact(ActionEvent event) {
 
