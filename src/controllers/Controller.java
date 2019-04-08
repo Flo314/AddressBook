@@ -166,7 +166,7 @@ public class Controller implements Initializable {
 
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText(null);
-                alert.setContentText("Success added!");
+                alert.setContentText("Success Added!");
                 alert.showAndWait();
             } catch (SQLException ex) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -199,13 +199,62 @@ public class Controller implements Initializable {
     }
 
     @FXML
+    void editContact(ActionEvent event) throws SQLException {
+
+        String query = "update contact set nom=?, prenom=?,telephone=?, adresse=?, cpt=?, ville=?, email=? where nom='"+tempUsername+"'";
+
+        try {
+            preparedStatement = SingletonCnx.getConnection().prepareStatement(query);
+            preparedStatement.setString(1, nom.getText());
+            preparedStatement.setString(2, prenom.getText());
+            preparedStatement.setString(3, telephones.getText());
+            preparedStatement.setString(4, adresse.getText());
+            preparedStatement.setString(5, codep.getText());
+            preparedStatement.setString(6, ville.getText());
+            preparedStatement.setString(7, email.getText());
+            preparedStatement.execute();
+            preparedStatement.close();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText("Success Updated!");
+            alert.showAndWait();
+            data.clear();
+            loadData();
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+    }
+
+    @FXML
     void deleteContact(ActionEvent event) {
 
     }
 
+    static String tempUsername;
     @FXML
-    void editContact(ActionEvent event) {
+    public void showOnClick() throws SQLException {
 
+        try {
+            Personne person = tblData.getSelectionModel().getSelectedItem();
+            String query = "Select * from contact";
+            preparedStatement = SingletonCnx.getConnection().prepareStatement(query);
+            
+            tempUsername = person.getNom();
+            nom.setText(person.getNom());
+            prenom.setText(person.getPrenom());
+            telephones.setText(person.getPhones().toString());
+            adresse.setText(person.getAdresse());
+            codep.setText(person.getCpt());
+            ville.setText(person.getVille());
+            email.setText(person.getEmails().toString());
+
+            preparedStatement.close();
+            rs.close();
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
     }
 
 }
