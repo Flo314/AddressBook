@@ -201,7 +201,7 @@ public class Controller implements Initializable {
     @FXML
     void editContact(ActionEvent event) throws SQLException {
 
-        String query = "update contact set nom=?, prenom=?,telephone=?, adresse=?, cpt=?, ville=?, email=? where nom='"+tempUsername+"'";
+        String query = "update contact set nom=?, prenom=?,telephone=?, adresse=?, cpt=?, ville=?, email=? where nom='" + tempUsername + "'";
 
         try {
             preparedStatement = SingletonCnx.getConnection().prepareStatement(query);
@@ -227,11 +227,32 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    void deleteContact(ActionEvent event) {
+    void deleteContact(ActionEvent event) throws SQLException {
 
+        try {
+            Personne person = tblData.getSelectionModel().getSelectedItem();
+            String query = "delete from contact where nom=?";
+            preparedStatement = SingletonCnx.getConnection().prepareStatement(query);
+
+            preparedStatement.setString(1, person.getNom());
+            preparedStatement.executeUpdate();
+
+            preparedStatement.close();
+            rs.close();
+
+        } catch (SQLException ex) {
+            System.out.println(ex);
+        }
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setContentText("Success Deleted!");
+        alert.showAndWait();
+        data.clear();
+        loadData();
     }
 
     static String tempUsername;
+
     @FXML
     public void showOnClick() throws SQLException {
 
@@ -239,7 +260,7 @@ public class Controller implements Initializable {
             Personne person = tblData.getSelectionModel().getSelectedItem();
             String query = "Select * from contact";
             preparedStatement = SingletonCnx.getConnection().prepareStatement(query);
-            
+
             tempUsername = person.getNom();
             nom.setText(person.getNom());
             prenom.setText(person.getPrenom());
