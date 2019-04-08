@@ -63,8 +63,7 @@
             <Button layoutX="302.0" layoutY="527.0" mnemonicParsing="false" onAction="#deleteContact" prefHeight="33.0" prefWidth="78.0" style="-fx-background-color: ff0000; -fx-border-color: ff0000;" text="Delete" textFill="WHITE" />
          </children>
       </AnchorPane>
-      <TextField fx:id="searchField" layoutX="426.0" layoutY="30.0" prefHeight="33.0" prefWidth="269.0" promptText="Search" style="-fx-border-color: #0c33ff; -fx-background-color: #fff;" />
-      <Button fx:id="searchButton" layoutX="701.0" layoutY="30.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="107.0" style="-fx-background-color: #0c33ff; -fx-border-color: #0c33ff;" text="Search" textFill="WHITE" />
+      <TextField fx:id="searchField" layoutX="426.0" layoutY="30.0" onKeyReleased="#search" prefHeight="33.0" prefWidth="269.0" promptText="Search" style="-fx-border-color: #0c33ff; -fx-background-color: #fff;" />
       <TableView fx:id="tblData" layoutX="426.0" layoutY="104.0" onMouseClicked="#showOnClick" prefHeight="458.0" prefWidth="842.0">
         <columns>
           <TableColumn fx:id="col_nom" prefWidth="104.0" text="Noms" />

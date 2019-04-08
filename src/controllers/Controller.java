@@ -13,10 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,6 +29,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 
 /**
  *
@@ -86,9 +90,6 @@ public class Controller implements Initializable {
 
     @FXML
     private TextField searchField;
-
-    @FXML
-    private Button searchButton;
 
     @FXML
     private Button printButton;
@@ -276,6 +277,26 @@ public class Controller implements Initializable {
         } catch (SQLException ex) {
             System.out.println(ex);
         }
+    }
+    
+    @FXML
+    public void search(){
+        FilteredList<Personne> filterData = new FilteredList<>(data, e -> true);
+        searchField.setOnKeyReleased((KeyEvent e) ->{
+            searchField.textProperty().addListener((observableValue, oldValue, newValue) ->{
+                filterData.setPredicate((Predicate<? super Personne>) (Personne person)->{
+                    if(newValue == null || newValue.isEmpty()){
+                        return true;
+                    }
+                    String lowerCaseFilter = newValue.toLowerCase();
+                    return person.getNom().toLowerCase().contains(lowerCaseFilter);
+                    
+                });
+            });
+            SortedList<Personne> sortedData = new SortedList<>(filterData);
+            sortedData.comparatorProperty().bind(tblData.comparatorProperty());
+            tblData.setItems(sortedData);
+        });
     }
 
 }
