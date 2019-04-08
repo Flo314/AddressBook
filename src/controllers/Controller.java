@@ -7,6 +7,7 @@ package controllers;
 
 import Model.Personne;
 import Utils.SingletonCnx;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,13 +24,24 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.print.PageLayout;
+import javafx.print.PageOrientation;
+import javafx.print.Paper;
+import javafx.print.PrintResolution;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.transform.Scale;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -278,25 +290,67 @@ public class Controller implements Initializable {
             System.out.println(ex);
         }
     }
-    
+
     @FXML
-    public void search(){
+    public void search() {
         FilteredList<Personne> filterData = new FilteredList<>(data, e -> true);
-        searchField.setOnKeyReleased((KeyEvent e) ->{
-            searchField.textProperty().addListener((observableValue, oldValue, newValue) ->{
-                filterData.setPredicate((Predicate<? super Personne>) (Personne person)->{
-                    if(newValue == null || newValue.isEmpty()){
+        searchField.setOnKeyReleased((KeyEvent e) -> {
+            searchField.textProperty().addListener((observableValue, oldValue, newValue) -> {
+                filterData.setPredicate((Predicate<? super Personne>) (Personne person) -> {
+                    if (newValue == null || newValue.isEmpty()) {
                         return true;
                     }
                     String lowerCaseFilter = newValue.toLowerCase();
                     return person.getNom().toLowerCase().contains(lowerCaseFilter);
-                    
+
                 });
             });
             SortedList<Personne> sortedData = new SortedList<>(filterData);
             sortedData.comparatorProperty().bind(tblData.comparatorProperty());
             tblData.setItems(sortedData);
         });
+    }
+
+//    @FXML
+//    public void print(ActionEvent event) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+//        Printer printer = Printer.getDefaultPrinter();
+//        PageLayout pageLayout
+//                = printer.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.HARDWARE_MINIMUM);
+//        PrinterJob job = PrinterJob.createPrinterJob();
+//        tblData.setPrefSize(pageLayout.getPrintableWidth(), pageLayout.getPrintableHeight());
+//        if (job != null && job.showPrintDialog(tblData.getScene().getWindow())) {
+//            boolean success = job.printPage(pageLayout, tblData);
+//            if (success) {
+//                job.endJob();
+//            }
+//        }
+//
+//    }
+    @FXML
+    public void print(ActionEvent event) {
+
+        Printer printer = Printer.getDefaultPrinter();
+        Stage dialogStage = new Stage(StageStyle.DECORATED);
+        PageLayout pageLayout
+               = printer.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.HARDWARE_MINIMUM);
+        PrinterJob job = PrinterJob.createPrinterJob(printer);
+        if (job != null) {
+            boolean showDialog = job.showPageSetupDialog(dialogStage);
+            if (showDialog) {
+                tblData.setScaleX(0.60);
+                tblData.setScaleY(0.60);
+                tblData.setTranslateX(-590);
+                tblData.setTranslateY(-170);
+                boolean success = job.printPage(tblData);
+                if (success) {
+                    job.endJob();
+                }
+                tblData.setTranslateX(0);
+                tblData.setTranslateY(0);
+                tblData.setScaleX(1.0);
+                tblData.setScaleY(1.0);
+            }
+        }
     }
 
 }

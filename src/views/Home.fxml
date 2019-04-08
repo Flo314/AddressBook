@@ -75,6 +75,6 @@
             <TableColumn fx:id="col_mail" prefWidth="177.0" text="Emails" />
         </columns>
       </TableView>
-      <Button fx:id="printButton" layoutX="1158.0" layoutY="30.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="107.0" style="-fx-background-color: #0c33ff; -fx-border-color: #0c33ff;" text="print" textFill="WHITE" />
+      <Button fx:id="printButton" layoutX="1158.0" layoutY="30.0" mnemonicParsing="false" onAction="#print" prefHeight="31.0" prefWidth="107.0" style="-fx-background-color: #0c33ff; -fx-border-color: #0c33ff;" text="print" textFill="WHITE" />
    </children>
 </AnchorPane>
