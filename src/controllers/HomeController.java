@@ -5,11 +5,7 @@
  */
 package controllers;
 
-
-
 import Model.Personne;
-
-
 
 import Utils.SingletonCnx;
 import javafx.event.ActionEvent;
@@ -37,7 +33,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-
 /**
  * FXML Controller class
  *
@@ -47,7 +42,6 @@ public class HomeController implements Initializable {
 
     SingletonCnx cnx;
     Personne personne;
-    
 
     @FXML
     private TextField nom;
@@ -102,7 +96,7 @@ public class HomeController implements Initializable {
 
     @FXML
     private Button printButton;
-    
+
     ObservableList<Personne> oblist = FXCollections.observableArrayList();
 
     /**
@@ -114,35 +108,76 @@ public class HomeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+//        try {
+//            cnx.getConnection();
+//            initiateCols();
+//            loadData();
+//        } catch (SQLException ex) {
+//            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         try {
+            cnx.getConnection();
             Connection con = SingletonCnx.getConnection();
             ResultSet rs = con.createStatement().executeQuery("SELECT * FROM contact");
-            
-                        
-            while(rs.next()){
-                oblist.add(new Personne(rs.getString("nom"),
-                rs.getString("prenom"),
-                rs.getString("adresse"),
-                rs.getString("cpt"),
-                rs.getString("ville")));
 
- 
+            while (rs.next()) {
+                oblist.add(new Personne(rs.getString("nom"),
+                        rs.getString("prenom"),
+                        rs.getString("adresse"),
+                        rs.getString("cpt"),
+                        rs.getString("ville")));
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         col_nom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         col_prenom.setCellValueFactory(new PropertyValueFactory<>("prenom"));
-        col_tel.setCellValueFactory(new PropertyValueFactory<>("phones")); 
+        col_tel.setCellValueFactory(new PropertyValueFactory<>("phones"));
         col_adress.setCellValueFactory(new PropertyValueFactory<>("adresse"));
-        col_code.setCellValueFactory(new PropertyValueFactory<>("cpt")); 
+        col_code.setCellValueFactory(new PropertyValueFactory<>("cpt"));
         col_vil.setCellValueFactory(new PropertyValueFactory<>("ville"));
         col_mail.setCellValueFactory(new PropertyValueFactory<>("emails"));
 
-        tblData.setItems(oblist);
+        tblData.getItems().setAll(oblist);
     }
 
+    private void initiateCols() {
+
+        col_nom.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        col_prenom.setCellValueFactory(new PropertyValueFactory<>("prenom"));
+        col_tel.setCellValueFactory(new PropertyValueFactory<>("phones"));
+        col_adress.setCellValueFactory(new PropertyValueFactory<>("adresse"));
+        col_code.setCellValueFactory(new PropertyValueFactory<>("cpt"));
+        col_vil.setCellValueFactory(new PropertyValueFactory<>("ville"));
+        col_mail.setCellValueFactory(new PropertyValueFactory<>("emails"));
+    }
+
+    private void loadData() {
+        //oblist.removeAll(oblist);
+
+        try {
+            Connection con = SingletonCnx.getConnection();
+            ResultSet rs = con.createStatement().executeQuery("SELECT * FROM contact");
+
+
+            while (rs.next()) {
+                oblist.add(new Personne(rs.getString("nom"),
+                        rs.getString("prenom"),
+                        rs.getString("adresse"),
+                        rs.getString("cpt"),
+                        rs.getString("ville")));
+
+            }
+        }catch (SQLException ex) {
+            Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex);
+            
+        tblData.getItems().setAll(oblist);
+        }
+    }
+    
     @FXML
     void deleteContact(ActionEvent event) {
 
@@ -191,6 +226,7 @@ public class HomeController implements Initializable {
                 alert.showAndWait();
                 System.out.println(ex);
             }
+            loadData();
         }
     }
 
